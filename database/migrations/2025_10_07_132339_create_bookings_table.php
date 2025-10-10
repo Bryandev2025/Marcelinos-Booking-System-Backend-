@@ -13,21 +13,20 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('guest_id'); // Foreign key column
-            $table->string('contact_number');
-            $table->string('reference_id')->unique();
-            $table->string('email')->unique();
-            $table->enum('status', ['Pending', 'Occupied', 'Completed', 'Cancelled', 'Reschedule'])
-            ->default('Pending');
-            $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('guest_id')
-                ->references('id')
-                ->on('guests')
-                ->onDelete('cascade');
-    
-            });
+                $table->foreignId('guest_id')->constrained()->onDelete('cascade');
+                $table->foreignId('room_id')->constrained()->onDelete('cascade');
+                $table->string('reference_id')->unique();
+                $table->dateTime('check_in');
+                $table->dateTime('check_out');
+                $table->integer('num_of_guests');
+                $table->integer('total_price');
+                $table->enum('payment_status', ['Unpaid', 'Paid', 'Refunded'])->default('Unpaid');
+                $table->enum('status', [
+                    'Pending', 'Confirmed', 'Checked-In', 'Completed', 'Cancelled', 'Rescheduled'
+                ])->default('Pending');
+                $table->text('remarks')->nullable();
+                $table->timestamps();
+                });
     }
 
     /**

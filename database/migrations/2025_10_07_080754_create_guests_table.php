@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('guests', function (Blueprint $table) {
-            $table->id();
-            $table->string('f_name');
-            $table->string('m_name')->nullable();
-            $table->string('l_name');
-            $table->integer('contact_number');
-            $table->enum('gender', ['Male', 'Female', 'Other'])->nullable();
-            $table->timestamps();
+             $table->id();
+                $table->string('first_name');
+                $table->string('middle_name')->nullable();
+                $table->string('last_name');
+                $table->enum('gender', ['Male', 'Female', 'Other']);
+                $table->string('phone');
+                $table->string('email')->nullable();
+                $table->string('address')->nullable();
+                $table->timestamps();
         });
     }
 

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Room;
+use App\Models\Guest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
@@ -12,7 +16,8 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+         $bookings = Booking::with(['guest', 'room'])->get();
+        return response()->json($bookings);
     }
 
     /**
@@ -28,15 +33,39 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         $validated = $request->validate([
+            'guest_id' => 'required|exists:guests,id',
+            'room_id' => 'required|exists:rooms,id',
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after:check_in',
+            'num_of_guests' => 'required|integer|min:1',
+            'total_price' => 'required|integer|min:0',
+        ]);
+
+        $validated['reference_id'] = Str::uuid();
+        $validated['payment_status'] = 'Unpaid';
+        $validated['status'] = 'Pending';
+
+        $booking = Booking::create($validated);
+
+        return response()->json([
+            'message' => 'Booking created successfully!',
+            'data' => $booking
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Booking $booking)
+    public function show($id)
     {
-        //
+      $booking = Booking::find($id);
+
+    if (!$booking) {
+        return response()->json(['message' => 'Booking not found'], 404);
+    }
+
+    return response()->json(['booking' => $booking]);
     }
 
     /**
@@ -50,16 +79,32 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Booking $booking)
+    public function update(Request $request, $id)
     {
-        //
+        $booking = Booking::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'sometimes|in:Pending,Confirmed,Checked-In,Completed,Cancelled,Rescheduled',
+            'payment_status' => 'sometimes|in:Unpaid,Paid,Refunded',
+            'remarks' => 'nullable|string',
+        ]);
+
+        $booking->update($validated);
+
+        return response()->json([
+            'message' => 'Booking updated successfully!',
+            'data' => $booking
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Booking $booking)
+    public function destroy($id)
     {
-        //
+        $booking = Booking::findOrFail($id);
+        $booking->delete();
+
+        return response()->json(['message' => 'Booking deleted successfully!']);
     }
 }
