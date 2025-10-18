@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rooms', function (Blueprint $table) {
-             $table->id();
-                $table->string('room_number')->unique();
-                $table->enum('type', ['Standard', 'Deluxe', 'Family']);
-                $table->integer('capacity');
-                $table->integer('price');
-                $table->enum('status', ['Available', 'Occupied', 'Maintenance'])->default('Available');
-                $table->text('description')->nullable();
-                $table->timestamps();
+            $table->id();
+            $table->string('room_number')->unique();
+            $table->enum('type', ['Standard', 'Deluxe', 'Family']);
+            $table->integer('capacity')->default(1);;
+            $table->decimal('price', 10, 2);
+            $table->enum('status', ['Available', 'Reserved', 'Occupied'])->default('Available');
+            $table->text('description')->nullable();
+            $table->timestamps();
         });
     }
 

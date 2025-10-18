@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Room extends Model
 {
-       use HasFactory;
+   use HasFactory;
 
     protected $fillable = [
         'room_number', 'type', 'capacity', 'price', 'status', 'description',
@@ -17,4 +17,6 @@ class Room extends Model
     {
         return $this->hasMany(Booking::class);
     }
-}
+
+    
+}   

@@ -2,100 +2,90 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Room;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-   
-    /**
-     * Display a listing of the resource.
-     */
+    // 📋 Get all rooms
     public function index()
     {
-         return response()->json(Room::all());
+        $rooms = Room::all();
+        return response()->json($rooms);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-         $validated = $request->validate([
-            'room_number' => 'required|string|unique:rooms,room_number',
-            'type' => 'required|in:Standard,Deluxe,Family',
-            'capacity' => 'required|integer|min:1',
-            'price' => 'required|integer|min:0',
-            'status' => 'in:Available,Occupied,Maintenance',
-            'description' => 'nullable|string',
-        ]);
-
-        $room = Room::create($validated);
-
-        return response()->json([
-            'message' => 'Room created successfully!',
-            'data' => $room
-        ], 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
+    // 🔍 Get single room
     public function show($id)
     {
-         $room = Room::findOrFail($id);
+        $room = Room::find($id);
+
+        if (!$room) {
+            return response()->json(['message' => 'Room not found.'], 404);
+        }
+
         return response()->json($room);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Room $room)
-    {
-        //
-    }
+    // 🏠 Create a new room
+    public function store(Request $request)
+{
+    $validated = $request->validate([
+        'room_number' => 'required|string|unique:rooms,room_number',
+        'type'        => 'required|string',
+        'capacity'    => 'required|integer|min:1',
+        'price'       => 'required|numeric|min:0',
+        'description' => 'nullable|string',
+    ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Set default status
+    $validated['status'] = 'Available';
+
+    $room = Room::create($validated);
+
+    return response()->json([
+        'message' => 'Room created successfully.',
+        'room'    => $room,
+    ], 201);
+}
+
+
+    // ✏️ Update existing room
     public function update(Request $request, $id)
     {
-         $room = Room::findOrFail($id);
+        $room = Room::find($id);
+
+        if (!$room) {
+            return response()->json(['message' => 'Room not found.'], 404);
+        }
 
         $validated = $request->validate([
-            'room_number' => 'sometimes|string|unique:rooms,room_number,' . $id,
-            'type' => 'sometimes|in:Standard,Deluxe,Family',
+            'room_number' => 'sometimes|string|unique:rooms,room_number,' . $room->id,
+            'type' => 'sometimes|string',
             'capacity' => 'sometimes|integer|min:1',
-            'price' => 'sometimes|integer|min:0',
-            'status' => 'sometimes|in:Available,Occupied,Maintenance',
+            'price' => 'sometimes|numeric|min:0',
+            'status' => 'sometimes|string|in:Available,Occupied,Maintenance',
             'description' => 'nullable|string',
         ]);
 
         $room->update($validated);
 
         return response()->json([
-            'message' => 'Room updated successfully!',
-            'data' => $room
+            'message' => 'Room updated successfully.',
+            'room' => $room
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // 🗑 Delete room
     public function destroy($id)
     {
-        $room = Room::findOrFail($id);
+        $room = Room::find($id);
+
+        if (!$room) {
+            return response()->json(['message' => 'Room not found.'], 404);
+        }
+
         $room->delete();
 
-        return response()->json(['message' => 'Room deleted successfully!']);
+        return response()->json(['message' => 'Room deleted successfully.']);
     }
 }

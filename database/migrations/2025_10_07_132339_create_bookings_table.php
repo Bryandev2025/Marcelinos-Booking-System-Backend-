@@ -11,22 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
+       Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-                $table->foreignId('guest_id')->constrained()->onDelete('cascade');
-                $table->foreignId('room_id')->constrained()->onDelete('cascade');
-                $table->string('reference_id')->unique();
-                $table->dateTime('check_in');
-                $table->dateTime('check_out');
-                $table->integer('num_of_guests');
-                $table->integer('total_price');
-                $table->enum('payment_status', ['Unpaid', 'Paid', 'Refunded'])->default('Unpaid');
-                $table->enum('status', [
-                    'Pending', 'Confirmed', 'Checked-In', 'Completed', 'Cancelled', 'Rescheduled'
-                ])->default('Pending');
-                $table->text('remarks')->nullable();
-                $table->timestamps();
-                });
+            $table->foreignId('guest_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_id')->constrained()->onDelete('cascade');
+            $table->string('reference_id')->unique();
+            $table->date('check_in');
+            $table->date('check_out');
+            $table->integer('num_of_guests');
+            $table->decimal('total_price', 10, 2);
+            $table->enum('status', ['Pending', 'Confirmed', 'Checked_In', 'Completed', 'Cancelled'])->default('Pending');
+            $table->enum('payment_status', ['Unpaid', 'Paid', 'Refunded'])->default('Unpaid');
+            $table->text('remarks')->nullable();
+            $table->timestamp('pending_expires_at')->nullable();
+            $table->timestamps();
+            });
     }
 
     /**
