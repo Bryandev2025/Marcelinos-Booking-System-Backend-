@@ -1,5 +1,4 @@
 name: 🚀 STAGING - Marcelino's APIs via FTP
-
 on:
   push:
     branches:
@@ -40,13 +39,12 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
           protocol: ftps
-          security: loose
-          passive: true
-          timeout: 120000
-          local-dir: ./
+          port: 21
           server-dir: /public_html/marcelinos-api/
+          local-dir: ./
+          timeout: 60000
+          security: loose
           exclude: |
             **/.git*
             **/.github*
