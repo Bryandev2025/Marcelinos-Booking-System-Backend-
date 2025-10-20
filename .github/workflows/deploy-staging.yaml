@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
-          server-dir: /public_html/marcelinos-api/
+          server-dir: /public_html/API-Marcelinos/
           local-dir: ./
           timeout: 120000
           security: loose
