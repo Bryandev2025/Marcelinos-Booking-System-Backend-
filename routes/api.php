@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ClientReviewController;
+use App\Http\Controllers\ContactController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -37,3 +39,8 @@ Route::put('/bookings/{id}', [BookingController::class, 'update']);
 Route::put('/bookings/{id}/pay', [BookingController::class, 'simulatePayment']);
 
 
+// Client Reviews
+Route::get('/reviews', [ClientReviewController::class, 'index']);
+
+// Contact Form
+Route::post('/contact', [ContactController::class, 'store']);
